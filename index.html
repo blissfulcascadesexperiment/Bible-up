@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step 5 Bible Training</title>
+<style>
+:root{--bg:#faf7f0;--card:#fff;--ink:#2b2b2b;--accent:#7c5cff;--accent2:#34d1bf;--muted:#777}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:28px 20px;text-align:center}
+header h1{margin:0 0 4px}header p{margin:0;opacity:.9}
+.modebar{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.modebar button{border:0;border-radius:20px;padding:10px 22px;font-size:15px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.25);color:#fff}
+.modebar button.active{background:#fff;color:var(--accent)}
+nav#topicNav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:16px}
+nav#topicNav button{border:2px solid var(--accent);background:#fff;border-radius:20px;padding:8px 14px;font-size:14px;cursor:pointer}
+nav#topicNav button.active{background:var(--accent);color:#fff}
+main{max-width:900px;margin:0 auto;padding:0 16px 60px}
+.card{background:var(--card);border-radius:14px;padding:20px;margin:14px 0;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.card h2{margin:0 0 6px}.tag{display:inline-block;background:#efeaff;color:var(--accent);border-radius:12px;padding:2px 10px;font-size:12px;font-weight:700;margin-bottom:8px}
+h3{margin:18px 0 8px;color:var(--accent)}
+ul{margin:6px 0;padding-left:22px}li{margin:5px 0}
+.verse{background:#f4f1ff;border-left:4px solid var(--accent);padding:8px 12px;margin:8px 0;border-radius:0 8px 8px 0}
+.verse b{display:block}
+textarea{width:100%;min-height:90px;border:2px solid #ddd;border-radius:10px;padding:10px;font-size:14px;font-family:inherit}
+.savenote{background:var(--accent2);color:#fff;border:0;border-radius:10px;padding:8px 16px;font-weight:700;cursor:pointer;margin-top:8px}
+.quizbox{text-align:center}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;border:2px solid #ddd;border-radius:10px;background:#fff;cursor:pointer;font-size:15px}
+.opt.correct{border-color:green;background:#e9f9e9}.opt.wrong{border-color:red;background:#fdecec}
+#quizFeedback{font-weight:700;min-height:24px;margin:10px 0}
+.bigbtn{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:12px 26px;font-size:16px;font-weight:700;cursor:pointer;margin:6px}
+select{padding:10px;font-size:15px;border-radius:10px}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+<h1>📖 Step 5 Bible Training</h1>
+<p>Study resource — 8 foundations</p>
+<div class="modebar">
+<button id="btnStudy" class="active">📚 Study</button>
+<button id="btnQuiz">📝 Quiz</button>
+</div>
+</header>
+<nav id="topicNav"></nav>
+<main>
+<section id="studyView"><div id="topicCards"></div></section>
+<section id="quizView" hidden>
+<div class="card quizbox">
+<h2>Self-Check Quiz</h2>
+<p class="muted">Test what you've learned. <span id="quizScore"></span></p>
+<select id="quizTopic"></select><br><br>
+<button class="bigbtn" id="quizStart">Start Quiz</button>
+<div id="quizPlay" hidden>
+<h3 id="quizQ"></h3>
+<div id="quizOpts"></div>
+<div id="quizFeedback"></div>
+<button class="bigbtn" id="quizNext" hidden>Next →</button>
+</div>
+</div>
+</section>
+</main>
+<script>
+const TOPICS=[
+{id:'prayer',icon:'🙏',title:'Prayer Life',overview:'Prayer is ongoing conversation with God — talking and listening. Jesus modeled it; Paul commands it without ceasing.',
+verses:[{ref:'1 Thessalonians 5:17',text:'Pray without ceasing.'},{ref:'Philippians 4:6',text:'Be anxious for nothing, but in everything by prayer... let your requests be made known to God.'},{ref:'Matthew 6:9–13',text:"The Lord's Prayer — our pattern: worship, surrender, daily bread, forgiveness, guidance."},{ref:'Mark 1:35',text:'Jesus rose early, went to a solitary place, and prayed.'}],
+points:['A.C.T.S. pattern: Adoration, Confession, Thanksgiving, Supplication.','Consistency over length — daily time beats occasional marathons.','Listen as well as speak; leave quiet space for God.','Pray Scripture back to God; it aligns your requests with His will.'],
+reflect:['What does your current prayer rhythm look like, honestly?','Which part of A.C.T.S. do you skip most, and why?','What is one specific thing you will pray about daily this week?'],
+quiz:[{q:'According to 1 Thessalonians 5:17, how often should we pray?',options:['Once a day','Without ceasing','Only on Sundays'],answer:1},{q:'What did Jesus model in Mark 1:35?',options:['Praying publicly for attention','Rising early to pray alone','Only praying in crisis'],answer:1},{q:'In the A.C.T.S. pattern, what does "C" stand for?',options:['Celebration','Confession','Commanding'],answer:1}]},
+{id:'study',icon:'📖',title:'How to Study Your Bible',overview:'The Bible feeds us when we read it slowly, in context, and with obedience. Study turns information into transformation.',
+verses:[{ref:'2 Timothy 2:15',text:'Study to show yourself approved... rightly dividing the word of truth.'},{ref:'Psalm 119:105',text:'Your word is a lamp to my feet and a light to my path.'},{ref:'Acts 17:11',text:'The Bereans searched the Scriptures daily to check what they heard.'},{ref:'Joshua 1:8',text:'Meditate on the Word day and night... then you will have success.'}],
+points:['Observe → Interpret → Apply: what does it say, mean, and change?','Always read in context — verse, chapter, whole-Bible story.','Compare Scripture with Scripture; let clear passages explain unclear ones.','End every study with one obedience step.'],
+reflect:['What passage will you study slowly this week?','What keeps you from daily reading, and what will you change?','Who can you share one insight with?'],
+quiz:[{q:'The Bereans in Acts 17:11 were commended for what?',options:['Taking notes on Sundays','Searching the Scriptures daily','Memorizing the Psalms'],answer:1},{q:'What are the three basic study moves?',options:['Read, skim, forget','Observe, interpret, apply','Sing, shout, sit'],answer:1},{q:'Psalm 119:105 calls God\'s Word what?',options:['A lamp and a light','A locked mystery','A history book'],answer:0}]},
+{id:'spirit',icon:'🕊️',title:'Your Friend Holy Spirit',overview:'The Holy Spirit is not a force but a Person — our Helper, Teacher, and source of power and fruit.',
+verses:[{ref:'John 14:16–17',text:'He will give you another Helper to be with you forever.'},{ref:'John 16:13',text:'The Spirit of truth will guide you into all truth.'},{ref:'Acts 1:8',text:'You will receive power when the Holy Spirit comes on you.'},{ref:'Galatians 5:22–23',text:'The fruit of the Spirit is love, joy, peace, patience...'}],
+points:['He is a Person to know, not just power to use.','He guides into truth and reminds us of Jesus\' words.','He gives power for witness and holy living.','His fruit in us matters more than gifts through us.'],
+reflect:['Do you relate to the Spirit as a Person or a concept?','Which fruit of the Spirit is weakest in you right now?','Where do you need His power this week?'],
+quiz:[{q:'Jesus called the Holy Spirit our what (John 14)?',options:['Critic','Helper','Stranger'],answer:1},{q:'According to John 16:13, the Spirit guides us into...',options:['All truth','All wealth','All comfort'],answer:0},{q:'Which is listed as fruit of the Spirit?',options:['Fame','Patience','Popularity'],answer:1}]},
+{id:'devoted',icon:'🔥',title:'The Devoted Life',overview:'Devotion is full surrender — presenting your whole life to God daily, holding nothing back.',
+verses:[{ref:'Romans 12:1–2',text:'Present your bodies a living sacrifice... be transformed by the renewing of your mind.'},{ref:'Luke 9:23',text:'Deny yourself, take up your cross daily, and follow Me.'},{ref:'Galatians 2:20',text:'I have been crucified with Christ; Christ lives in me.'}],
+points:['Surrender is daily, not one-time — a living sacrifice.','Devotion touches time, money, relationships, and habits.','Renew your mind with the Word; transformation follows.','Keep first love first — devotion is relationship, not rules.'],
+reflect:['What one area have you held back from God?','What would "daily cross" look like in your schedule?','How will you guard your first love this month?'],
+quiz:[{q:'Romans 12:1 urges us to present ourselves as...',options:['A living sacrifice','A casual observer','A part-time servant'],answer:0},{q:'Luke 9:23 says to take up your cross how often?',options:['Yearly','Daily','Never'],answer:1},{q:'Galatians 2:20 says who now lives in the believer?',options:['Moses','Christ','Elijah'],answer:1}]},
+{id:'praise',icon:'🎶',title:'Praise Life',overview:'Praise is a lifestyle and a weapon. God inhabits praise, and praise shifts atmospheres — including ours.',
+verses:[{ref:'Psalm 100:4',text:'Enter His gates with thanksgiving and His courts with praise.'},{ref:'Psalm 22:3',text:'God inhabits the praises of His people.'},{ref:'Hebrews 13:15',text:'Offer the sacrifice of praise continually.'},{ref:'Acts 16:25–26',text:'Paul and Silas sang in prison — and chains broke.'}],
+points:['Praise before the breakthrough — Paul and Silas sang in chains.','Thanksgiving is praise with detail; name His goodness.','Praise is a sacrifice when feelings disagree.','A praise lifestyle guards the heart from grumbling.'],
+reflect:['What has God done that you have not thanked Him for?','How do you respond when praise feels hard?','What song or psalm will you carry this week?'],
+quiz:[{q:'What happened when Paul and Silas praised in prison?',options:['Nothing changed','Chains broke and doors opened','They fell asleep'],answer:1},{q:'Hebrews 13:15 says to offer praise how often?',options:['Continually','At funerals only','When happy'],answer:0},{q:'Psalm 22:3 says God does what with praise?',options:['Ignores it','Inhabits it','Grades it'],answer:1}]},
+{id:'authority',icon:'⚔️',title:'Authority of the Believer',overview:'Jesus delegated His authority to believers. We stand against darkness, armored and grounded in His name.',
+verses:[{ref:'Luke 10:19',text:'I give you authority... over all the power of the enemy.'},{ref:'Matthew 28:18',text:'All authority in heaven and earth has been given to Me.'},{ref:'Ephesians 6:11',text:'Put on the whole armor of God.'},{ref:'James 4:7',text:'Resist the devil and he will flee from you.'}],
+points:['Authority is delegated — it flows from being under Jesus.','Armor up daily: truth, righteousness, gospel, faith, salvation, Word.','Resist actively; submission to God comes first.','Speak the Word — authority is exercised by declaration.'],
+reflect:['Where do you need to stand in God\'s authority right now?','Which piece of the armor do you neglect?','What lie must you replace with a declared truth?'],
+quiz:[{q:'Who gave believers authority (Luke 10:19)?',options:['The pastor','Jesus','An angel'],answer:1},{q:'James 4:7 says resist the devil and he will...',options:['Negotiate','Flee','Stay'],answer:1},{q:'Ephesians 6 tells us to put on...',options:['Casual clothes','The whole armor of God','Camouflage'],answer:1}]},
+{id:'disciple',icon:'🌱',title:'Discipleship',overview:'Disciples follow Jesus, abide in His Word, and multiply — making disciples who make disciples.',
+verses:[{ref:'Matthew 28:19–20',text:'Go and make disciples... teaching them to obey all I commanded.'},{ref:'John 8:31',text:'If you abide in My word, you are truly My disciples.'},{ref:'2 Timothy 2:2',text:'Entrust to faithful people who will teach others also.'},{ref:'Luke 14:27',text:'Whoever does not carry their cross cannot be My disciple.'}],
+points:['A disciple abides — ongoing obedience, not one decision.','Growth goal: from convert to disciple to disciple-maker.','2 Timothy 2:2 pattern: four generations of impartation.','Count the cost honestly; grace is free, discipleship costs.'],
+reflect:['Who is discipling you right now?','Who are you investing in?','What is one obedience step from your last reading?'],
+quiz:[{q:'The Great Commission commands us to make...',options:['Converts only','Disciples','Crowds'],answer:1},{q:'John 8:31 marks a true disciple by...',options:['Church attendance','Abiding in His word','A title'],answer:1},{q:'The 2 Timothy 2:2 pattern produces how many generations?',options:['One','Two','Four (Paul→Timothy→faithful→others)'],answer:2}]},
+{id:'honor',icon:'🤝',title:'Culture of Honor',overview:'Honor values people as God does — above, beside, and below us. Where honor flows, gifts grow.',
+verses:[{ref:'Romans 12:10',text:'Honor one another above yourselves.'},{ref:'Philippians 2:3',text:'In humility value others above yourselves.'},{ref:'1 Peter 2:17',text:'Show proper respect to everyone.'},{ref:'Mark 6:4–5',text:'Without honor, even Jesus did few miracles there.'}],
+points:['Honor up (leaders), down (those you lead), and all around.','Words carry honor or dishonor — speak life deliberately.','Honor unlocks gifting; dishonor restricts flow (Mark 6).','Honor includes boundaries and truth — not flattery.'],
+reflect:['Who do you find hardest to honor, and why?','What would honoring-above-yourself change at home or work?','What is one honoring word you will speak this week?'],
+quiz:[{q:'Romans 12:10 tells us to honor...',options:['Only leaders','One another above ourselves','Ourselves first'],answer:1},{q:'In Mark 6, lack of honor resulted in...',options:['More miracles','Few miracles','A feast'],answer:1},{q:'Philippians 2:3 says to value others how?',options:['Below you','Above yourselves','As rivals'],answer:1}]}
+];
+const nav=document.getElementById('topicNav'),cards=document.getElementById('topicCards');
+const quizTopic=document.getElementById('quizTopic');
+let activeTopic=TOPICS[0].id;
+TOPICS.forEach(t=>{
+const b=document.createElement('button');b.textContent=t.icon+' '+t.title;b.dataset.id=t.id;
+b.onclick=()=>{activeTopic=t.id;render();};nav.appendChild(b);
+const o=document.createElement('option');o.value=t.id;o.textContent=t.title;quizTopic.appendChild(o);
+const all=document.createElement('option');if(t.id===TOPICS[0].id){all.value='all';all.textContent='All topics (mixed)';quizTopic.appendChild(all);}
+});
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function render(){
+[...nav.children].forEach(b=>b.classList.toggle('active',b.dataset.id===activeTopic));
+const t=TOPICS.find(x=>x.id===activeTopic);
+const saved=localStorage.getItem('step5-notes-'+t.id)||'';
+cards.innerHTML=`<div class="card"><span class="tag">${t.icon} FOUNDATION</span><h2>${esc(t.title)}</h2>
+<p>${esc(t.overview)}</p>
+<h3>🔑 Key Verses</h3>${t.verses.map(v=>`<div class="verse"><b>${esc(v.ref)}</b>${esc(v.text)}</div>`).join('')}
+<h3>📌 Study Outline</h3><ul>${t.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>
+<h3>💭 Reflection Questions</h3><ul>${t.reflect.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>
+<h3>✏️ My Notes <span class="muted">(saved on this device)</span></h3>
+<textarea id="noteBox" placeholder="Paste your own teaching notes for ${esc(t.title)} here...">${esc(saved)}</textarea><br>
+<button class="savenote" onclick="saveNote()">💾 Save Notes</button> <span id="noteMsg" class="muted"></span>
+<p class="muted" style="margin-top:12px">➕ Add your notes any time — they stay on this device even after closing.</p></div>`;
+}
+window.saveNote=()=>{localStorage.setItem('step5-notes-'+activeTopic,document.getElementById('noteBox').value);document.getElementById('noteMsg').textContent='Saved ✓';};
+// mode toggle
+const studyView=document.getElementById('studyView'),quizView=document.getElementById('quizView');
+document.getElementById('btnStudy').onclick=e=>{studyView.hidden=false;quizView.hidden=true;e.target.classList.add('active');document.getElementById('btnQuiz').classList.remove('active');};
+document.getElementById('btnQuiz').onclick=e=>{studyView.hidden=true;quizView.hidden=false;e.target.classList.add('active');document.getElementById('btnStudy').classList.remove('active');};
+// quiz
+let quizQs=[],qi=0,score=0;
+document.getElementById('quizStart').onclick=()=>{
+const sel=quizTopic.value||'all';
+quizQs=sel==='all'?TOPICS.flatMap(t=>t.quiz.map(q=>({...q,topic:t.title}))):TOPICS.find(t=>t.id===sel).quiz.map(q=>({...q,topic:''}));
+quizQs=quizQs.sort(()=>Math.random()-.5);qi=0;score=0;document.getElementById('quizPlay').hidden=false;showQ();
+};
+function showQ(){
+if(qi>=quizQs.length){document.getElementById('quizQ').textContent=`Done! Score: ${score}/${quizQs.length}`;document.getElementById('quizOpts').innerHTML='';document.getElementById('quizFeedback').textContent=score===quizQs.length?'🌟 Excellent — ready to teach it!':'Good reps — review the outlines and try again.';document.getElementById('quizNext').hidden=true;document.getElementById('quizScore').textContent=`Score: ${score}/${quizQs.length}`;return;}
+const q=quizQs[qi];document.getElementById('quizNext').hidden=true;document.getElementById('quizFeedback').textContent='';
+document.getElementById('quizQ').textContent=(q.topic?`[${q.topic}] `:'')+`Q${qi+1}/${quizQs.length}: ${q.q}`;
+const box=document.getElementById('quizOpts');box.innerHTML='';
+q.options.forEach((op,i)=>{const b=document.createElement('button');b.className='opt';b.textContent=op;
+b.onclick=()=>{[...box.children].forEach((c,j)=>{c.disabled=true;if(j===q.answer)c.classList.add('correct');});if(i===q.answer){score++;document.getElementById('quizFeedback').textContent='✓ Correct';}else{b.classList.add('wrong');document.getElementById('quizFeedback').textContent='✗ Review the outline above and try the next one.';}document.getElementById('quizNext').hidden=false;};box.appendChild(b);});
+}
+document.getElementById('quizNext').onclick=()=>{qi++;showQ();};
+render();
+</script>
+</body>
+</html>
