@@ -42,6 +42,11 @@ select{padding:10px;font-size:15px;border-radius:10px}
 .booksListDisplay li{margin:3px 0;font-size:14px}
 .booksListDisplay li.correct{color:green;font-weight:700}
 .booksListDisplay li.wrong{color:red;text-decoration:line-through}
+.beforeAfterInputs{display:flex;gap:15px;margin:15px 0;flex-wrap:wrap}
+.beforeAfterInputs input{flex:1;min-width:150px;padding:10px;font-size:15px;border:2px solid #ddd;border-radius:10px}
+.beforeAfterInputs input.correct{border-color:green;background:#e9f9e9}
+.beforeAfterInputs input.wrong{border-color:red;background:#fdecec}
+.centerText{text-align:center;font-size:18px;font-weight:700;color:var(--accent);margin:10px 0}
 </style>
 </head>
 <body>
@@ -63,6 +68,7 @@ select{padding:10px;font-size:15px;border-radius:10px}
 <button id="btnFoundationsQuiz" class="active">📚 Test What You've Learned</button>
 <button id="btnBooksQuiz">📖 Books of the Bible (KJV Order)</button>
 <button id="btnTypingQuiz">⌨️ Type All Books</button>
+<button id="btnBeforeAfterQuiz">⬅️➡️ Before & After</button>
 </div>
 <div id="foundationsQuizSection">
 <p class="muted">Test what you've learned. <span id="quizScore"></span></p>
@@ -83,6 +89,10 @@ select{padding:10px;font-size:15px;border-radius:10px}
 <p class="muted" style="font-size:13px">Enter each book name on a new line. Books with numbers (1 John, 2 Timothy, etc.) should include the number.</p>
 <button class="bigbtn" id="typingQuizStart">Start Quiz</button>
 </div>
+<div id="beforeAfterQuizSection" hidden>
+<p class="muted">Given a book, name the book that comes BEFORE and AFTER it. <span id="beforeAfterScore"></span></p>
+<button class="bigbtn" id="beforeAfterQuizStart">Start Quiz</button>
+</div>
 <div id="quizPlay" hidden>
 <h3 id="quizQ"></h3>
 <div id="quizOpts"></div>
@@ -99,6 +109,19 @@ select{padding:10px;font-size:15px;border-radius:10px}
 <ol id="booksListItems"></ol>
 </div>
 <button class="bigbtn" id="typingQuizRetry" hidden>Try Again</button>
+</div>
+<div id="beforeAfterQuizPlay" hidden>
+<h3 id="beforeAfterQ"></h3>
+<p class="muted">Name the book BEFORE and AFTER:</p>
+<div class="beforeAfterInputs">
+<input type="text" id="beforeInput" placeholder="Book BEFORE">
+<div class="centerText">→ <span id="centerBook"></span> ←</div>
+<input type="text" id="afterInput" placeholder="Book AFTER">
+</div>
+<div id="beforeAfterFeedback"></div>
+<button class="bigbtn" id="beforeAfterSubmit">Check Answer</button>
+<button class="bigbtn" id="beforeAfterNext" hidden>Next →</button>
+</div>
 </section>
 </main>
 <script>
@@ -205,11 +228,14 @@ document.getElementById('btnQuiz').onclick=e=>{studyView.hidden=true;quizView.hi
 const foundationsQuizSection=document.getElementById('foundationsQuizSection');
 const booksQuizSection=document.getElementById('booksQuizSection');
 const typingQuizSection=document.getElementById('typingQuizSection');
+const beforeAfterQuizSection=document.getElementById('beforeAfterQuizSection');
 const quizPlayDiv=document.getElementById('quizPlay');
 const typingQuizPlayDiv=document.getElementById('typingQuizPlay');
-document.getElementById('btnFoundationsQuiz').onclick=e=>{foundationsQuizSection.hidden=false;booksQuizSection.hidden=true;typingQuizSection.hidden=true;quizPlayDiv.hidden=true;typingQuizPlayDiv.hidden=true;e.target.classList.add('active');document.getElementById('btnBooksQuiz').classList.remove('active');document.getElementById('btnTypingQuiz').classList.remove('active');};
-document.getElementById('btnBooksQuiz').onclick=e=>{foundationsQuizSection.hidden=true;booksQuizSection.hidden=false;typingQuizSection.hidden=true;quizPlayDiv.hidden=true;typingQuizPlayDiv.hidden=true;e.target.classList.add('active');document.getElementById('btnFoundationsQuiz').classList.remove('active');document.getElementById('btnTypingQuiz').classList.remove('active');};
-document.getElementById('btnTypingQuiz').onclick=e=>{foundationsQuizSection.hidden=true;booksQuizSection.hidden=true;typingQuizSection.hidden=false;quizPlayDiv.hidden=true;typingQuizPlayDiv.hidden=true;e.target.classList.add('active');document.getElementById('btnFoundationsQuiz').classList.remove('active');document.getElementById('btnBooksQuiz').classList.remove('active');};
+const beforeAfterQuizPlayDiv=document.getElementById('beforeAfterQuizPlay');
+document.getElementById('btnFoundationsQuiz').onclick=e=>{foundationsQuizSection.hidden=false;booksQuizSection.hidden=true;typingQuizSection.hidden=true;beforeAfterQuizSection.hidden=true;quizPlayDiv.hidden=true;typingQuizPlayDiv.hidden=true;beforeAfterQuizPlayDiv.hidden=true;e.target.classList.add('active');document.getElementById('btnBooksQuiz').classList.remove('active');document.getElementById('btnTypingQuiz').classList.remove('active');document.getElementById('btnBeforeAfterQuiz').classList.remove('active');};
+document.getElementById('btnBooksQuiz').onclick=e=>{foundationsQuizSection.hidden=true;booksQuizSection.hidden=false;typingQuizSection.hidden=true;beforeAfterQuizSection.hidden=true;quizPlayDiv.hidden=true;typingQuizPlayDiv.hidden=true;beforeAfterQuizPlayDiv.hidden=true;e.target.classList.add('active');document.getElementById('btnFoundationsQuiz').classList.remove('active');document.getElementById('btnTypingQuiz').classList.remove('active');document.getElementById('btnBeforeAfterQuiz').classList.remove('active');};
+document.getElementById('btnTypingQuiz').onclick=e=>{foundationsQuizSection.hidden=true;booksQuizSection.hidden=true;typingQuizSection.hidden=false;beforeAfterQuizSection.hidden=true;quizPlayDiv.hidden=true;typingQuizPlayDiv.hidden=true;beforeAfterQuizPlayDiv.hidden=true;e.target.classList.add('active');document.getElementById('btnFoundationsQuiz').classList.remove('active');document.getElementById('btnBooksQuiz').classList.remove('active');document.getElementById('btnBeforeAfterQuiz').classList.remove('active');};
+document.getElementById('btnBeforeAfterQuiz').onclick=e=>{foundationsQuizSection.hidden=true;booksQuizSection.hidden=true;typingQuizSection.hidden=true;beforeAfterQuizSection.hidden=false;quizPlayDiv.hidden=true;typingQuizPlayDiv.hidden=true;beforeAfterQuizPlayDiv.hidden=true;e.target.classList.add('active');document.getElementById('btnFoundationsQuiz').classList.remove('active');document.getElementById('btnBooksQuiz').classList.remove('active');document.getElementById('btnTypingQuiz').classList.remove('active');};
 // Foundations Quiz
 let quizQs=[],qi=0,score=0;
 document.getElementById('quizStart').onclick=()=>{
@@ -235,7 +261,6 @@ generateBooksQuiz();
 function generateBooksQuiz(){
 booksQuizQs=[];
 if(bquizType==='order'){
-// What comes next? - Pick 15 random books and ask what comes after
 for(let i=0;i<15;i++){
 const idx=Math.floor(Math.random()*(KJV_BOOKS.length-1));
 const correct=KJV_BOOKS[idx+1];
@@ -248,7 +273,6 @@ opts.sort(()=>Math.random()-.5);
 booksQuizQs.push({q:`What book comes after ${KJV_BOOKS[idx]}?`,opts:opts,answer:opts.indexOf(correct)});
 }
 }else if(bquizType==='before-after'){
-// Before or after? - Is book A before or after book B
 for(let i=0;i<15;i++){
 const idx1=Math.floor(Math.random()*KJV_BOOKS.length);
 const idx2=Math.floor(Math.random()*KJV_BOOKS.length);
@@ -259,7 +283,6 @@ const before=idx1<idx2;
 booksQuizQs.push({q:`Is "${book1}" before or after "${book2}"?`,opts:['Before','After'],answer:before?0:1});
 }
 }else if(bquizType==='testament'){
-// OT or NT
 for(let i=0;i<15;i++){
 const idx=Math.floor(Math.random()*KJV_BOOKS.length);
 const book=KJV_BOOKS[idx];
@@ -324,12 +347,10 @@ const feedback=document.getElementById('typingQuizFeedback');
 const listDisplay=document.getElementById('booksListDisplay');
 const listItems=document.getElementById('booksListItems');
 
-// Check accuracy
 const userNormalized=userBooks.map(b=>b.toLowerCase());
 const expectedNormalized=KJV_BOOKS.map(b=>b.toLowerCase());
 correct=userBooks.filter((b,i)=>i<KJV_BOOKS.length && b.toLowerCase()===KJV_BOOKS[i].toLowerCase()).length;
 
-// Build results list
 listItems.innerHTML='';
 KJV_BOOKS.forEach((book,idx)=>{
 const li=document.createElement('li');
@@ -368,6 +389,82 @@ document.getElementById('typingQuizFeedback').textContent='';
 document.getElementById('booksListDisplay').hidden=true;
 document.getElementById('typingQuizRetry').hidden=true;
 document.getElementById('typingQuizInput').focus();
+};
+
+// Before & After Quiz
+let beforeAfterQs=[],baqi=0,bascore=0;
+document.getElementById('beforeAfterQuizStart').onclick=()=>{
+generateBeforeAfterQuiz();
+};
+
+function generateBeforeAfterQuiz(){
+beforeAfterQs=[];
+for(let i=0;i<15;i++){
+let idx=Math.floor(Math.random()*(KJV_BOOKS.length));
+// Make sure we have both before and after
+if(idx===0)idx=1;
+if(idx===KJV_BOOKS.length-1)idx=KJV_BOOKS.length-2;
+beforeAfterQs.push({
+currentBook:KJV_BOOKS[idx],
+beforeBook:KJV_BOOKS[idx-1],
+afterBook:KJV_BOOKS[idx+1]
+});
+}
+baqi=0;bascore=0;beforeAfterQuizPlayDiv.hidden=false;showBeforeAfterQ();
+}
+
+function showBeforeAfterQ(){
+if(baqi>=beforeAfterQs.length){
+document.getElementById('beforeAfterQ').textContent=`Done! Score: ${bascore}/${beforeAfterQs.length}`;
+document.getElementById('beforeAfterFeedback').textContent=bascore===beforeAfterQs.length?'🌟 Perfect recall!':'Keep practicing!';
+document.getElementById('beforeAfterSubmit').hidden=true;
+document.getElementById('beforeAfterNext').hidden=true;
+document.getElementById('beforeAfterScore').textContent=`Score: ${bascore}/${beforeAfterQs.length}`;
+return;
+}
+const q=beforeAfterQs[baqi];
+document.getElementById('beforeAfterQ').textContent=`Q${baqi+1}/${beforeAfterQs.length}`;
+document.getElementById('centerBook').textContent=q.currentBook;
+document.getElementById('beforeInput').value='';
+document.getElementById('afterInput').value='';
+document.getElementById('beforeInput').className='';
+document.getElementById('afterInput').className='';
+document.getElementById('beforeAfterFeedback').textContent='';
+document.getElementById('beforeAfterSubmit').hidden=false;
+document.getElementById('beforeAfterNext').hidden=true;
+document.getElementById('beforeInput').focus();
+}
+
+document.getElementById('beforeAfterSubmit').onclick=()=>{
+const q=beforeAfterQs[baqi];
+const userBefore=document.getElementById('beforeInput').value.trim().toLowerCase();
+const userAfter=document.getElementById('afterInput').value.trim().toLowerCase();
+const correctBefore=q.beforeBook.toLowerCase();
+const correctAfter=q.afterBook.toLowerCase();
+
+const beforeCorrect=userBefore===correctBefore;
+const afterCorrect=userAfter===correctAfter;
+
+document.getElementById('beforeInput').className=beforeCorrect?'correct':'wrong';
+document.getElementById('afterInput').className=afterCorrect?'correct':'wrong';
+
+if(beforeCorrect&&afterCorrect){
+bascore++;
+document.getElementById('beforeAfterFeedback').innerHTML='<p style="color:green;font-weight:700">✓ Correct! Both books match!</p>';
+}else{
+let feedback='<p style="color:red;font-weight:700">✗ Incorrect:</p>';
+if(!beforeCorrect)feedback+=`<p>Before should be: <strong>${q.beforeBook}</strong></p>`;
+if(!afterCorrect)feedback+=`<p>After should be: <strong>${q.afterBook}</strong></p>`;
+document.getElementById('beforeAfterFeedback').innerHTML=feedback;
+}
+
+document.getElementById('beforeAfterSubmit').hidden=true;
+document.getElementById('beforeAfterNext').hidden=false;
+};
+
+document.getElementById('beforeAfterNext').onclick=()=>{
+baqi++;
+showBeforeAfterQ();
 };
 
 render();
