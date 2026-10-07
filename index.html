@@ -109,7 +109,7 @@ const KJV_BOOKS = [
   "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
   "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra",
   "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
-  "Ecclesiastes", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel",
+  "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel",
   "Daniel", "Hosea", "Joel", "Amos", "Obadiah",
   "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah",
   "Haggai", "Zechariah", "Malachi",
@@ -263,7 +263,7 @@ booksQuizQs.push({q:`Is "${book1}" before or after "${book2}"?`,opts:['Before','
 for(let i=0;i<15;i++){
 const idx=Math.floor(Math.random()*KJV_BOOKS.length);
 const book=KJV_BOOKS[idx];
-const isOT=idx<39;
+const isOT=idx<40;
 booksQuizQs.push({q:`Is "${book}" in the Old Testament or New Testament?`,opts:['Old Testament','New Testament'],answer:isOT?0:1});
 }
 }
@@ -350,9 +350,9 @@ feedback.innerHTML=`<p><strong>Score: ${correct}/${KJV_BOOKS.length} correct (${
 
 if(correct===KJV_BOOKS.length){
 feedback.innerHTML+=`<p style="color:green;font-weight:700">🌟 Perfect! You know all 66 books!</p>`;
-}else if(correct>=52){
+}else if(correct>=53){
 feedback.innerHTML+=`<p style="color:green;font-weight:700">🎯 Excellent work! Keep the momentum!</p>`;
-}else if(correct>=39){
+}else if(correct>=40){
 feedback.innerHTML+=`<p style="color:orange;font-weight:700">👍 Good progress! Keep studying!</p>`;
 }else{
 feedback.innerHTML+=`<p style="color:orange;font-weight:700">💪 Keep practicing — you\'re building Bible muscle!</p>`;
