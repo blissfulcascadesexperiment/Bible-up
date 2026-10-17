@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Humility & Contentment - Scripture Quiz</title>
+  <style>
+    :root {
+      --bg: #f5f3ff;
+      --panel: rgba(255,255,255,0.94);
+      --card: #faf7ff;
+      --accent: #7c5cff;
+      --accent-dark: #5b45d6;
+      --ink: #1f2430;
+      --muted: #535c6c;
+      --good: #1f9d5d;
+      --bad: #b42318;
+      --line: #ddd7f7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        linear-gradient(rgba(255,255,255,0.82), rgba(255,255,255,0.82)),
+        url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+    }
+
+    .panel {
+      width: min(900px, 100%);
+      background: var(--panel);
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+      padding: 28px 24px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      text-align: center;
+      color: var(--accent-dark);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+    }
+
+    .lead {
+      margin: 0 0 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .quiz-card {
+      background: var(--card);
+      border-left: 5px solid var(--accent);
+      border-radius: 12px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .ref {
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .verse {
+      font-size: 1.06rem;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 2px solid var(--line);
+      outline: none;
+      transition: border-color .2s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .feedback {
+      min-height: 24px;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .correct { color: var(--good); }
+    .wrong { color: var(--bad); }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 18px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #e9edff;
+      color: var(--ink);
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .answer-box {
+      display: none;
+      margin-top: 14px;
+      color: #3f4656;
+      font-style: italic;
+      background: #f1f4ff;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .panel {
+        padding: 20px 14px;
+      }
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>Humility and Contentment</h1>
+    <p class="lead">Fill in the missing word from each verse. Use the King James Version.</p>
+
+    <div id="quizCard" class="quiz-card"></div>
+
+    <div class="controls">
+      <button id="prevBtn" class="secondary">Previous</button>
+      <button id="checkBtn">Check</button>
+      <button id="nextBtn">Next</button>
+      <button id="revealBtn" class="secondary">Reveal</button>
+      <button id="restartBtn" class="secondary">Restart</button>
+    </div>
+
+    <div id="answerBox" class="answer-box"></div>
+  </div>
+
+  <script>
+    const verses = [
+      { ref: 'Philippians 4:11', text: 'Not that I speak in respect of want: for I have learned, in whatsoever state I am, therewith to be content.', blank: 'content' },
+      { ref: '1 Timothy 6:6', text: 'But godliness with contentment is great gain.', blank: 'contentment' },
+      { ref: 'Hebrews 13:5', text: 'Let your conversation be without covetousness; and be content with such things as ye have: for he hath said, I will never leave thee, nor forsake thee.', blank: 'content' },
+      { ref: 'James 4:10', text: 'Humble yourselves in the sight of the Lord, and he shall lift you up.', blank: 'Humble' },
+      { ref: '1 Peter 5:6', text: 'Humble yourselves therefore under the mighty hand of God, that he may exalt you in due time:', blank: 'Humble' },
+      { ref: 'Micah 6:8', text: 'He hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?', blank: 'humbly' },
+      { ref: 'Proverbs 22:4', text: 'By humility and the fear of the LORD are riches, and honour, and life.', blank: 'humility' },
+      { ref: 'Philippians 2:3', text: 'Let nothing be done through strife or vainglory; but in lowliness of mind let each esteem other better than themselves.', blank: 'lowliness' }
+    ];
+
+    let currentIndex = 0;
+
+    const quizCard = document.getElementById('quizCard');
+    const answerBox = document.getElementById('answerBox');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const checkBtn = document.getElementById('checkBtn');
+    const revealBtn = document.getElementById('revealBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    function normalize(value) {
+      return (value || '').trim().toLowerCase().replace(/[^a-z]/g, '');
+    }
+
+    function blankVerse(text, word) {
+      const escaped = word.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+      return text.replace(regex, '_____');
+    }
+
+    function renderQuestion() {
+      const v = verses[currentIndex];
+      quizCard.innerHTML = `
+        <div class="ref">${v.ref}</div>
+        <div class="verse">${blankVerse(v.text, v.blank)}</div>
+        <input id="answerInput" type="text" placeholder="Type the missing word" />
+        <div id="feedback" class="feedback"></div>
+      `;
+
+      const input = document.getElementById('answerInput');
+      input.focus();
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === verses.length - 1;
+      document.getElementById('feedback').textContent = '';
+      answerBox.style.display = 'none';
+      answerBox.textContent = '';
+    }
+
+    function checkAnswer() {
+      const v = verses[currentIndex];
+      const input = document.getElementById('answerInput').value;
+      const feedback = document.getElementById('feedback');
+      const isCorrect = normalize(input) === normalize(v.blank);
+
+      if (isCorrect) {
+        feedback.textContent = 'Correct ✓';
+        feedback.className = 'feedback correct';
+      } else {
+        feedback.textContent = 'Not quite — try again or reveal the answer.';
+        feedback.className = 'feedback wrong';
+      }
+    }
+
+    function revealAnswer() {
+      const v = verses[currentIndex];
+      const feedback = document.getElementById('feedback');
+      feedback.textContent = 'Answer: ' + v.blank;
+      feedback.className = 'feedback correct';
+      answerBox.style.display = 'block';
+      answerBox.textContent = 'Full verse: ' + v.text;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < verses.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      }
+    });
+
+    checkBtn.addEventListener('click', checkAnswer);
+    revealBtn.addEventListener('click', revealAnswer);
+    restartBtn.addEventListener('click', () => {
+      currentIndex = 0;
+      renderQuestion();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && document.activeElement && document.activeElement.id === 'answerInput') {
+        checkAnswer();
+      }
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>
